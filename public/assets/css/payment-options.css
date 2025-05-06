@@ -1,0 +1,213 @@
+/* Payment Options - Light Mode */
+.payment-option {
+    cursor: pointer;
+    border: 2px solid #e9ecef;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.payment-option:hover {
+    border-color: #405189;
+    box-shadow: 0 0 15px rgba(64, 81, 137, 0.1);
+    transform: translateY(-2px);
+}
+
+.payment-option.selected {
+    border-color: #405189;
+    background-color: #f8f9fa;
+    box-shadow: 0 0 20px rgba(64, 81, 137, 0.15);
+}
+
+.payment-option img {
+    max-height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
+.payment-option .payment-details {
+    flex-grow: 1;
+}
+
+.payment-option .payment-name {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 4px;
+}
+
+.payment-option .payment-description {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+#controlNumberSection {
+    transition: all 0.3s ease;
+}
+
+.control-number-display {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.control-number-display code {
+    font-size: 24px;
+    color: #405189;
+    letter-spacing: 2px;
+}
+
+.copy-button {
+    transition: all 0.2s ease;
+}
+
+.copy-button:hover {
+    background-color: #405189;
+    color: white;
+}
+
+.payment-modal .modal-content {
+    border-radius: 15px;
+}
+
+.payment-modal .modal-header {
+    background-color: #405189;
+    color: white;
+    border-radius: 15px 15px 0 0;
+}
+
+.payment-modal .modal-body {
+    padding: 25px;
+}
+
+.payment-status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.payment-status.pending {
+    background-color: #fff4e0;
+    color: #b77f06;
+}
+
+.payment-status.success {
+    background-color: #e8fff3;
+    color: #0a8a3d;
+}
+
+/* Dark Mode Styles */
+[data-layout-mode="dark"] .payment-option {
+    background: #2a3042;
+    border-color: #32394e;
+}
+
+[data-layout-mode="dark"] .payment-option:hover {
+    border-color: #556ee6;
+    box-shadow: 0 0 15px rgba(85, 110, 230, 0.1);
+}
+
+[data-layout-mode="dark"] .payment-option.selected {
+    border-color: #556ee6;
+    background-color: #2a3042;
+    box-shadow: 0 0 20px rgba(85, 110, 230, 0.15);
+}
+
+[data-layout-mode="dark"] .payment-option .payment-name {
+    color: #e9ecef;
+}
+
+[data-layout-mode="dark"] .payment-option .payment-description {
+    color: #a6b0cf;
+}
+
+[data-layout-mode="dark"] .control-number-display {
+    background: #32394e;
+    border-color: #32394e;
+}
+
+[data-layout-mode="dark"] .control-number-display code {
+    color: #556ee6;
+}
+
+[data-layout-mode="dark"] .payment-modal .modal-content {
+    background-color: #2a3042;
+}
+
+[data-layout-mode="dark"] .payment-modal .modal-header {
+    background-color: #32394e;
+    border-bottom-color: #32394e;
+}
+
+[data-layout-mode="dark"] .payment-modal .modal-footer {
+    border-top-color: #32394e;
+}
+
+[data-layout-mode="dark"] .payment-status.pending {
+    background-color: rgba(183, 127, 6, 0.2);
+    color: #ffd34e;
+}
+
+[data-layout-mode="dark"] .payment-status.success {
+    background-color: rgba(10, 138, 61, 0.2);
+    color: #34c38f;
+}
+
+[data-layout-mode="dark"] .card {
+    background-color: #2a3042;
+}
+
+[data-layout-mode="dark"] .card-body {
+    background-color: #2a3042;
+    color: #e9ecef;
+}
+
+[data-layout-mode="dark"] .modal-body {
+    background-color: #2a3042;
+    color: #e9ecef;
+}
+
+[data-layout-mode="dark"] .alert-info {
+    background-color: #32394e;
+    border-color: #32394e;
+    color: #e9ecef;
+}
+
+[data-layout-mode="dark"] .alert-success {
+    background-color: rgba(52, 195, 143, 0.2);
+    border-color: #34c38f;
+    color: #e9ecef;
+}
+
+[data-layout-mode="dark"] .bg-light {
+    background-color: #32394e !important;
+}
+
+[data-layout-mode="dark"] code {
+    background-color: #32394e;
+    color: #556ee6;
+}
+
+[data-layout-mode="dark"] .form-label {
+    color: #e9ecef;
+}
+
+[data-layout-mode="dark"] .btn-light {
+    background-color: #32394e;
+    border-color: #32394e;
+    color: #e9ecef;
+}
+
+[data-layout-mode="dark"] .btn-light:hover {
+    background-color: #3a4459;
+    border-color: #3a4459;
+    color: #fff;
+}

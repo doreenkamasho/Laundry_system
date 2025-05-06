@@ -1,0 +1,3 @@
+<?php echo e($slot); ?>: <?php echo e($url); ?>
+
+<?php /**PATH C:\Users\Lifemate\Desktop\Velzon_v4.2.0\Laravel\saas\vendor\laravel\framework\src\Illuminate\Mail/resources/views/text/button.blade.php ENDPATH**/ ?>

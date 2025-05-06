@@ -1,0 +1,42 @@
+.swal2-popup {
+    border-radius: 15px !important;
+    padding: 1.5rem !important;
+}
+
+.swal2-title {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+}
+
+.swal2-toast {
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.918) !important;
+    backdrop-filter: blur(5px) !important;
+}
+
+.swal2-icon {
+    border-width: 3px !important;
+}
+
+.swal2-success {
+    border-color: #0ab39c !important;
+    color: #0ab39c !important;
+}
+
+.swal2-error {
+    border-color: #f06548 !important;
+    color: #f06548 !important;
+}
+
+.swal2-warning {
+    border-color: #f7b84b !important;
+    color: #f7b84b !important;
+}
+
+.swal2-confirm {
+    transition: all 0.3s ease !important;
+}
+
+.swal2-popup.swal2-toast {
+    padding: 0.75rem !important;
+}

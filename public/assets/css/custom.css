@@ -1,0 +1,197 @@
+/* Sidebar Styles */
+[data-layout-style="detached"] .app-menu {
+    margin: 12px;
+    border-radius: 10px;
+    position: relative;
+}
+
+/* Sidebar Colors */
+[data-sidebar="dark"] .app-menu {
+    background: var(--vz-vertical-menu-bg-dark);
+    border-right: 1px solid var(--vz-vertical-menu-border-dark);
+}
+
+[data-sidebar="light"] .app-menu {
+    background: var(--vz-vertical-menu-bg);
+    border-right: 1px solid var(--vz-vertical-menu-border);
+}
+
+/* Gradient variations */
+[data-sidebar="gradient"] .app-menu {
+    background: linear-gradient(to bottom, #405189, #2f4386) !important;
+}
+
+[data-sidebar="gradient-2"] .app-menu {
+    background: linear-gradient(to bottom, #0ab39c, #0b9284) !important;
+}
+
+[data-sidebar="gradient-3"] .app-menu {
+    background: linear-gradient(to bottom, #299cdb, #1f78ac) !important;
+}
+
+[data-sidebar="gradient-4"] .app-menu {
+    background: linear-gradient(to bottom, #f7b84b, #c58a29) !important;
+}
+
+/* Sidebar Sizes */
+[data-sidebar-size="lg"] .app-menu {
+    width: 250px;
+}
+
+[data-sidebar-size="md"] .app-menu {
+    width: 180px;
+}
+
+[data-sidebar-size="sm"] .app-menu {
+    width: 70px;
+}
+
+[data-sidebar-size="sm-hover"] .app-menu:hover {
+    width: 250px;
+}
+
+/* Sidebar Images */
+.app-menu[data-sidebar-image] {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.app-menu[data-sidebar-image]:before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 1;
+}
+
+.app-menu[data-sidebar-image] * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Gradient backgrounds */
+.bg-vertical-gradient {
+    background: linear-gradient(to bottom, #405189, #2f4386) !important;
+}
+
+.bg-vertical-gradient-2 {
+    background: linear-gradient(to bottom, #0ab39c, #0b9284) !important;
+}
+
+.bg-vertical-gradient-3 {
+    background: linear-gradient(to bottom, #299cdb, #1f78ac) !important;
+}
+
+.bg-vertical-gradient-4 {
+    background: linear-gradient(to bottom, #f7b84b, #c58a29) !important;
+}
+
+/* Sidebar with image background */
+[data-sidebar-image] .app-menu {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+[data-sidebar-image] .app-menu:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 1;
+}
+
+[data-sidebar-image] .app-menu > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Improve text readability */
+[data-sidebar-image] .app-menu .navbar-brand,
+[data-sidebar-image] .app-menu .nav-link,
+[data-sidebar-image] .app-menu .menu-title {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+[data-sidebar-image] .app-menu .nav-link:hover,
+[data-sidebar-image] .app-menu .nav-link.active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+[data-sidebar-image] .app-menu .menu-title {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+[data-sidebar="gradient"] .app-menu .navbar-brand,
+[data-sidebar="gradient"] .app-menu .nav-link,
+[data-sidebar="gradient"] .app-menu .menu-title,
+[data-sidebar="gradient-2"] .app-menu .navbar-brand,
+[data-sidebar="gradient-2"] .app-menu .nav-link,
+[data-sidebar="gradient-2"] .app-menu .menu-title,
+[data-sidebar="gradient-3"] .app-menu .navbar-brand,
+[data-sidebar="gradient-3"] .app-menu .nav-link,
+[data-sidebar="gradient-3"] .app-menu .menu-title,
+[data-sidebar="gradient-4"] .app-menu .navbar-brand,
+[data-sidebar="gradient-4"] .app-menu .nav-link,
+[data-sidebar="gradient-4"] .app-menu .menu-title {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.nav-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Enhance sidebar badges */
+.nav-link .badge {
+    min-width: 24px;
+    height: 24px;
+    padding: 4px 8px;
+    font-weight: 600;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Badge colors with better visibility */
+.badge.bg-info {
+    background-color: #0dcaf0 !important;
+    color: #fff;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000;
+}
+
+.badge.bg-primary {
+    background-color: #0d6efd !important;
+    color: #fff;
+}
+
+.badge.bg-success {
+    background-color: #198754 !important;
+    color: #fff;
+}
+
+/* Hover effect for better interaction */
+.nav-link:hover .badge {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+.badge.rounded-pill {
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

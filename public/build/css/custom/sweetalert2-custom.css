@@ -1,0 +1,59 @@
+/* SweetAlert2 Custom Theme */
+.swal2-popup {
+    border-radius: 15px !important;
+    padding: 2rem !important;
+}
+
+.swal2-title {
+    font-size: 1.5rem !important;
+    color: #495057 !important;
+    font-weight: 600 !important;
+}
+
+.swal2-html-container {
+    font-size: 1rem !important;
+    color: #6c757d !important;
+    margin: 1rem 0 !important;
+}
+
+.swal2-actions {
+    gap: 0.5rem !important;
+}
+
+.swal2-styled {
+    padding: 0.5rem 1.5rem !important;
+    font-size: 0.9rem !important;
+    border-radius: 30px !important;
+    font-weight: 500 !important;
+}
+
+.swal2-icon {
+    border-width: 3px !important;
+}
+
+.swal2-icon.swal2-warning {
+    border-color: #f1b44c !important;
+    color: #f1b44c !important;
+}
+
+/* Custom button styles */
+.swal2-confirm.btn-soft-primary {
+    background-color: rgba(85, 110, 230, 0.1) !important;
+    color: #556ee6 !important;
+    border: none !important;
+}
+
+.swal2-cancel.btn-soft-secondary {
+    background-color: rgba(74, 79, 96, 0.1) !important;
+    color: #4a4f60 !important;
+    border: none !important;
+}
+
+/* Animation classes */
+.swal2-show {
+    animation: fadeIn 0.3s ease-in-out !important;
+}
+
+.swal2-hide {
+    animation: fadeOut 0.3s ease-in-out !important;
+}
