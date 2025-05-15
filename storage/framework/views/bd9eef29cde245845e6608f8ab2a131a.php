@@ -1,28 +1,29 @@
-@extends('layouts.master')
-@section('title') Laundress Profile @endsection
 
-@section('content')
-@component('components.breadcrumb')
-    @slot('li_1') Customer @endslot
-    @slot('title') Laundress Profile @endslot
-@endcomponent
+<?php $__env->startSection('title'); ?> Laundress Profile <?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+<?php $__env->startComponent('components.breadcrumb'); ?>
+    <?php $__env->slot('li_1'); ?> Customer <?php $__env->endSlot(); ?>
+    <?php $__env->slot('title'); ?> Laundress Profile <?php $__env->endSlot(); ?>
+<?php echo $__env->renderComponent(); ?>
 
 <div class="row">
     <div class="col-lg-4">
         <div class="text-center mb-4">
-            @if($laundress->avatar)
-                <img src="{{ asset('storage/'.$laundress->avatar) }}" 
+            <?php if($laundress->avatar): ?>
+                <img src="<?php echo e(asset('storage/'.$laundress->avatar)); ?>" 
                      class="avatar-xl rounded-circle img-thumbnail"
-                     alt="{{ $laundress->name }}">
-            @else
+                     alt="<?php echo e($laundress->name); ?>">
+            <?php else: ?>
                 <div class="avatar-xl rounded-circle bg-primary text-white mx-auto">
-                    <span class="avatar-title fs-1">{{ substr($laundress->name, 0, 1) }}</span>
+                    <span class="avatar-title fs-1"><?php echo e(substr($laundress->name, 0, 1)); ?></span>
                 </div>
-            @endif
-            <h5 class="mt-3 mb-1">{{ $laundress->name }}</h5>
+            <?php endif; ?>
+            <h5 class="mt-3 mb-1"><?php echo e($laundress->name); ?></h5>
             <p class="text-muted mb-3">
                 <i class="ri-map-pin-line align-middle"></i> 
-                {{ $laundress->laundressDetail->address }}
+                <?php echo e($laundress->laundressDetail->address); ?>
+
             </p>
             <div class="d-flex gap-2 justify-content-center mb-3">
                 <span class="badge rounded-pill bg-primary px-3 py-2">
@@ -41,19 +42,20 @@
             <div class="card-body">
                 <div class="schedule-info">
                     <h6 class="mb-3">Available Days</h6>
-                    @foreach($availableDays as $day)
+                    <?php $__currentLoopData = $availableDays; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $day): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="d-flex align-items-center mb-2">
                             <i class="ri-calendar-check-line text-primary me-2"></i>
-                            <span class="text-capitalize">{{ $day }}</span>
-                            @php $hours = $laundress->schedule->getWorkingHours($day) @endphp
-                            @if($hours)
+                            <span class="text-capitalize"><?php echo e($day); ?></span>
+                            <?php $hours = $laundress->schedule->getWorkingHours($day) ?>
+                            <?php if($hours): ?>
                                 <span class="ms-auto text-muted small">
-                                    {{ \Carbon\Carbon::parse($hours['start'])->format('g:i A') }} - 
-                                    {{ \Carbon\Carbon::parse($hours['end'])->format('g:i A') }}
+                                    <?php echo e(\Carbon\Carbon::parse($hours['start'])->format('g:i A')); ?> - 
+                                    <?php echo e(\Carbon\Carbon::parse($hours['end'])->format('g:i A')); ?>
+
                                 </span>
-                            @endif
+                            <?php endif; ?>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
         </div>
@@ -66,21 +68,21 @@
             </div>
             <div class="card-body">
                 <div class="row g-3">
-                    @foreach($laundress->services as $service)
+                    <?php $__currentLoopData = $laundress->services; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="col-md-6">
                             <div class="service-card p-3 border rounded">
-                                <h6 class="mb-3">{{ $service->name }}</h6>
+                                <h6 class="mb-3"><?php echo e($service->name); ?></h6>
                                 <div class="price-list">
-                                    @foreach($service->price_structure as $item)
+                                    <?php $__currentLoopData = $service->price_structure; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <div class="d-flex align-items-center mb-2">
-                                            <span>{{ $item['item'] }}</span>
-                                            <span class="ms-auto">Tsh{{ number_format($item['price'], 2) }}</span>
+                                            <span><?php echo e($item['item']); ?></span>
+                                            <span class="ms-auto">Tsh<?php echo e(number_format($item['price'], 2)); ?></span>
                                         </div>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
         </div>
@@ -137,16 +139,16 @@
         </div>
 
         <div class="text-end">
-            <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='{{ route('customer.bookings.create', ['laundress' => $laundress->id]) }}'">
+            <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='<?php echo e(route('customer.bookings.create', ['laundress' => $laundress->id])); ?>'">
                 <i class="ri-calendar-check-line align-middle me-1"></i>
                 Book Now
             </button>
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('css')
+<?php $__env->startSection('css'); ?>
 <style>
     .service-card:hover {
         box-shadow: 0 0 15px rgba(0,0,0,0.1);
@@ -171,4 +173,5 @@
         background-color: rgba(85, 110, 230, 0.1);
     }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\fyp\Ldms\resources\views/Customer/laundress/profile.blade.php ENDPATH**/ ?>

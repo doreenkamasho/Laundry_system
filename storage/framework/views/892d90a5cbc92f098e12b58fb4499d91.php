@@ -1,17 +1,17 @@
-@extends('layouts.master-without-nav')
-@section('title')
+
+<?php $__env->startSection('title'); ?>
     Laundry System - Find & Book Nearby Laundry Services
-@endsection
-@section('css')
-    <link href="{{ URL::asset('build/libs/swiper/swiper-bundle.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ URL::asset('css/custom.css') }}" rel="stylesheet" type="text/css" />
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('css'); ?>
+    <link href="<?php echo e(URL::asset('build/libs/swiper/swiper-bundle.min.css')); ?>" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(URL::asset('css/custom.css')); ?>" rel="stylesheet" type="text/css" />
     <!-- Include Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-@endsection
-@section('body')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('body'); ?>
 <body data-bs-spy="scroll" data-bs-target="#navbar">
-@endsection
-@section('content')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
     <!-- Begin page -->
     <div class="layout-wrapper landing">
         <!-- Navbar -->
@@ -46,12 +46,12 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('login') }}">
+                                    <a class="dropdown-item" href="<?php echo e(route('login')); ?>">
                                         <i class="fas fa-sign-in-alt me-2"></i>Login
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('register') }}">
+                                    <a class="dropdown-item" href="<?php echo e(route('register')); ?>">
                                         <i class="fas fa-user-plus me-2"></i>Register
                                     </a>
                                 </li>
@@ -89,10 +89,10 @@
                 </div>
 
                 <div class="d-flex gap-2 pb-4">
-                    <a href="{{ route('register') }}" class="btn btn-soft-warning btn-md">
+                    <a href="<?php echo e(route('register')); ?>" class="btn btn-soft-warning btn-md">
                         <i class="fas fa-search me-2"></i>Find Laundry Services
                     </a>
-                    <a href="{{ route('login') }}" class="btn btn-light btn-md">
+                    <a href="<?php echo e(route('login')); ?>" class="btn btn-light btn-md">
                         <i class="fas fa-map-marker-alt me-2"></i>Track Order
                     </a>
                 </div>
@@ -104,13 +104,13 @@
                     <div class="swiper">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">
-                                <img src="{{ asset('images/Laundry_Website/web1.png') }}" alt="Laundry Service" class="img-fluid rounded-3 shadow-lg">
+                                <img src="<?php echo e(asset('images/Laundry_Website/web1.png')); ?>" alt="Laundry Service" class="img-fluid rounded-3 shadow-lg">
                             </div>
                             <div class="swiper-slide">
-                                <img src="{{ asset('images/Laundry_Website/web2.png') }}" alt="Laundry Service" class="img-fluid rounded-3 shadow-lg">
+                                <img src="<?php echo e(asset('images/Laundry_Website/web2.png')); ?>" alt="Laundry Service" class="img-fluid rounded-3 shadow-lg">
                             </div>
                             <div class="swiper-slide">
-                                <img src="{{ asset('images/Laundry_Website/web3.png') }}" alt="Laundry Service" class="img-fluid rounded-3 shadow-lg">
+                                <img src="<?php echo e(asset('images/Laundry_Website/web3.png')); ?>" alt="Laundry Service" class="img-fluid rounded-3 shadow-lg">
                             </div>
                         </div>
                         <div class="swiper-pagination"></div>
@@ -125,7 +125,7 @@
         </section>
 
         <!-- Services Section -->
-        <section class="section" id="services" style="background-image: url('{{ asset('images/Laundry_Website/bg-pattern.png') }}');">
+        <section class="section" id="services" style="background-image: url('<?php echo e(asset('images/Laundry_Website/bg-pattern.png')); ?>');">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-8 text-center">
@@ -224,7 +224,7 @@
         </section>
 
         <!-- How It Works -->
-        <section class="section" id="how-it-works" style="background-image: url('{{ asset('images/Laundry_Website/marketplace.png') }}');">
+        <section class="section" id="how-it-works" style="background-image: url('<?php echo e(asset('images/Laundry_Website/marketplace.png')); ?>');">
             <div class="container">
             <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -379,8 +379,8 @@
                                         <li><a href="#privacy">Privacy Policy</a></li>
                                         <li><a href="#terms">Terms of Service</a></li>
                                     </ul>
-                                    <a href="{{ route('login') }}" class="nav-link">Sign In</a>
-                                    <a href="{{ route('register') }}" class="nav-link">Sign Up</a>
+                                    <a href="<?php echo e(route('login')); ?>" class="nav-link">Sign In</a>
+                                    <a href="<?php echo e(route('register')); ?>" class="nav-link">Sign Up</a>
                                 </div>
                             </div>
                         </div>
@@ -434,8 +434,10 @@
         </footer>
         <!-- end footer -->
     </div>
-@endsection
-@section('script')
-    <script src="{{ URL::asset('build/libs/swiper/swiper-bundle.min.js') }}"></script>
-    <script src="{{ URL::asset('js/hero-carousel.js') }}"></script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('script'); ?>
+    <script src="<?php echo e(URL::asset('build/libs/swiper/swiper-bundle.min.js')); ?>"></script>
+    <script src="<?php echo e(URL::asset('js/hero-carousel.js')); ?>"></script>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.master-without-nav', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\fyp\Ldms\resources\views/Laundry_Website/Website.blade.php ENDPATH**/ ?>

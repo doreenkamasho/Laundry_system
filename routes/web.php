@@ -76,7 +76,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Mark single notification as read
     Route::post('notifications/{notification}/mark-as-read', function ($notification) {
-        Auth::user()->notifications()->findOrFail($notification)->markAsRead();
+        // Auth::user()->notifications()->findOrFail($notification)->markAsRead();
         return back()->with('success', 'Notification marked as read');
     })->name('notifications.markAsRead');
 
