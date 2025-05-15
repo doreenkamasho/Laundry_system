@@ -7,7 +7,7 @@
     "scripts": {
         "clean": "rimraf public/build",
         "dev": "vite",
-        "build": "npm run clean && vite build",
+        "build": "vite build",
         "build-rtl": "rtlcss public/build/css/app.min.css & rtlcss public/build/css/bootstrap.min.css"
     },
     "devDependencies": {
@@ -22,7 +22,7 @@
         "rimraf": "^5.0.1",
         "rtlcss": "^3.0.0",
         "sass-loader": "^11.0.1",
-        "vite": "^5.0.12"
+        "vite": "^6.3.5"
     },
     "dependencies": {
         "@ckeditor/ckeditor5-build-classic": "^38.0.1",
