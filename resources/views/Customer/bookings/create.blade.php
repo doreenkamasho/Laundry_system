@@ -1,6 +1,12 @@
 @extends('layouts.master')
 @section('title') New Booking @endsection
 
+@php
+    if (!auth()->check()) {
+        return redirect()->route('login');
+    }
+@endphp
+
 @section('css')
 <style>
     .service-item {
@@ -84,6 +90,7 @@
 <div class="container-fluid">
     <form id="bookingForm" action="{{ route('customer.bookings.store') }}" method="POST">
         @csrf
+        <input type="hidden" name="customer_id" value="{{ auth()->id() }}">
         <input type="hidden" name="laundress_id" value="{{ $laundress->id }}">
         
         <div class="row">
@@ -159,7 +166,7 @@
                                     <select class="form-select" name="scheduled_date" required>
                                         <option value="">Choose a day...</option>
                                         @foreach($availableDays as $day)
-                                            <option value="{{ $day }}">{{ ucfirst($day) }}</option>
+                                            <option value="{{ strtolower($day) }}">{{ ucfirst($day) }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -210,9 +217,16 @@
                             <strong>Total:</strong>
                             <strong id="total">Tsh 0.00</strong>
                         </div>
-                        <button type="button" class="btn btn-primary btn-lg w-100" onclick="proceedToPaymentPage()">
-                            Proceed to Payment
+                        
+                        <button type="button" class="btn btn-primary btn-lg w-100" onclick="submitOrder()">
+                            <i class="ri-send-plane-line align-middle me-1"></i>
+                            Submit Order Request
                         </button>
+                        
+                        <div class="mt-3 text-center text-muted small">
+                            <i class="ri-information-line me-1"></i>
+                            Payment will be required after the laundress accepts your order
+                        </div>
                     </div>
                 </div>
             </div>
@@ -299,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function proceedToPaymentPage() {
+function submitOrder() {
     // Validate if any items are selected
     if (selectedPrices.size === 0) {
         Swal.fire({
@@ -310,191 +324,102 @@ function proceedToPaymentPage() {
         return;
     }
 
-    // Get form data
+    // Get form data and validate date
     const form = document.getElementById('bookingForm');
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
+    const selectedDate = form.scheduled_date.value;
+    
+    // Format the date to YYYY-MM-DD
+    const today = new Date();
+    const formattedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + getDayOffset(selectedDate))
+        .toISOString().split('T')[0];
 
     const totals = calculateTotal();
-    
-    // Get the first selected item's service ID
     const firstSelectedItem = selectedPrices.values().next().value;
     
-    // Store booking data
+    // Store booking data with all required fields
     const bookingData = {
-        laundress_id: '{{ $laundress->id }}',
+        customer_id: {{ auth()->id() }},
+        laundress_id: {{ $laundress->id }},
         service_id: firstSelectedItem.serviceId,
         selected_items: Array.from(selectedPrices.values()),
-        scheduled_date: form.scheduled_date.value,
+        scheduled_date: formattedDate,
         scheduled_time: form.scheduled_time.value,
         pickup_required: form.pickup_required.checked,
         delivery_required: form.delivery_required.checked,
         pickup_fee: totals.pickupFee,
         delivery_fee: totals.deliveryFee,
-        total_amount: totals.total
+        total_amount: totals.total,
+        payment_status: 'pending'
     };
-    
-    sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
 
-    // Show payment method selection modal
+    // Show confirmation dialog
     Swal.fire({
-        title: 'Select Payment Method',
+        title: 'Confirm Order',
         html: `
-            <div class="list-group payment-options">
-                <button type="button" class="list-group-item list-group-item-action mb-2" onclick="selectPaymentMethod('vodacom')">
-                    <div class="d-flex align-items-center">
-                        <div class="payment-logo vodacom-logo">
-                            <img src="{{ asset('images/logo/voda.png') }}" alt="M-Pesa" height="30" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Vodacom_logo.svg/320px-Vodacom_logo.svg.png';">
-                        </div>
-                        <div class="ms-3">
-                            <h6 class="mb-0">Vodacom M-Pesa</h6>
-                            <small class="text-muted">Pay with M-Pesa mobile money</small>
-                        </div>
-                    </div>
-                </button>
-                <button type="button" class="list-group-item list-group-item-action mb-2" onclick="selectPaymentMethod('airtel')">
-                    <div class="d-flex align-items-center">
-                        <div class="payment-logo airtel-logo">
-                            <img src="{{ asset('images/logo/airtel.png') }}" alt="Airtel Money" height="30" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Airtel_logo.svg/320px-Airtel_logo.svg.png';">
-                        </div>
-                        <div class="ms-3">
-                            <h6 class="mb-0">Airtel Money</h6>
-                            <small class="text-muted">Pay with Airtel Money</small>
-                        </div>
-                    </div>
-                </button>
-                <button type="button" class="list-group-item list-group-item-action mb-2" onclick="selectPaymentMethod('halotel')">
-                    <div class="d-flex align-items-center">
-                        <div class="payment-logo halotel-logo">
-                            <img src="{{ asset('images/logo/halotel.png') }}" alt="Halotel" height="30" onerror="this.onerror=null; this.src='https://www.halotel.co.tz/assets/images/logo.png';">
-                        </div>
-                        <div class="ms-3">
-                            <h6 class="mb-0">Halotel</h6>
-                            <small class="text-muted">Pay with Halotel mobile money</small>
-                        </div>
-                    </div>
-                </button>
-                <button type="button" class="list-group-item list-group-item-action" onclick="selectPaymentMethod('mixx')">
-                    <div class="d-flex align-items-center">
-                        <div class="payment-logo mixx-logo">
-                            <img src="{{ asset('images/logo/tigo.png') }}" alt="Mixx by YAS" height="30" onerror="this.onerror=null; this.src='https://vas.tzvas.com/tz/media/logos/mixx_logo.png';">
-                        </div>
-                        <div class="ms-3">
-                            <h6 class="mb-0">Mixx by YAS</h6>
-                            <small class="text-muted">Pay with Mixx mobile wallet</small>
-                        </div>
-                    </div>
-                </button>
-            </div>
+            <p>Total Amount: Tsh ${totals.total.toFixed(2)}</p>
+            <p class="text-muted small">You can pay after the laundress accepts your order.</p>
         `,
+        icon: 'info',
         showCancelButton: true,
-        showConfirmButton: false,
-        cancelButtonText: 'Close',
-        width: '400px',
-        didOpen: () => {
-            // Add CSS styles to handle image display
-            const style = document.createElement('style');
-            style.textContent = `
-                .payment-options .payment-logo {
-                    width: 50px;
-                    height: 30px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .payment-options .payment-logo img {
-                    max-width: 100%;
-                    max-height: 100%;
-                    object-fit: contain;
-                }
-                .vodacom-logo { background-color: #e60000; border-radius: 4px; padding: 3px; }
-                .airtel-logo { background-color: #fff; border-radius: 4px; padding: 3px; }
-                .halotel-logo { background-color: #ff5722; border-radius: 4px; padding: 3px; }
-                .mixx-logo { background-color: #ffdd00; border-radius: 4px; padding: 3px; }
-            `;
-            document.head.appendChild(style);
+        confirmButtonText: 'Submit Order',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Submit the form directly
+            submitBookingData(bookingData);
         }
     });
 }
 
-function processPayment(phoneNumber, method) {
-    const bookingData = JSON.parse(sessionStorage.getItem('bookingData'));
-    
-    // Ensure pickup and delivery values are properly set as booleans
-    bookingData.pickup_required = !!bookingData.pickup_required;
-    bookingData.delivery_required = !!bookingData.delivery_required;
-    
-    return fetch('{{ route("customer.payment.process") }}', {
+function submitBookingData(bookingData) {
+    // Submit booking data to server
+    fetch('{{ route("customer.bookings.store") }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
             'Accept': 'application/json'
         },
-        body: JSON.stringify({
-            phone_number: phoneNumber,
-            amount: bookingData.total_amount,
-            provider: method,
-            booking_data: bookingData
-        })
+        body: JSON.stringify(bookingData)
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => Promise.reject(err));
-        }
-        return response.json();
-    });
-}
-
-function selectPaymentMethod(method) {
-    const bookingData = JSON.parse(sessionStorage.getItem('bookingData'));
-    
-    Swal.fire({
-        title: `Enter ${method.toUpperCase()} Number`,
-        input: 'tel',
-        inputLabel: 'Enter your phone number',
-        inputPlaceholder: '255XXXXXXXXX',
-        showCancelButton: true,
-        confirmButtonText: 'Pay Now',
-        inputValidator: (value) => {
-            if (!value) {
-                return 'Phone number is required!';
-            }
-            if (!/^255[0-9]{9}$/.test(value)) {
-                return 'Please enter a valid Tanzania phone number';
-            }
-        },
-        preConfirm: (phoneNumber) => {
-            Swal.showLoading();
-            return processPayment(phoneNumber, method)
-                .catch(error => {
-                    Swal.showValidationMessage(error.message);
-                    throw error;
-                });
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Clear booking data from session
-            sessionStorage.removeItem('bookingData');
-            
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
             Swal.fire({
                 icon: 'success',
-                title: 'Payment Successful!',
-                text: `Transaction Reference: ${result.value.transaction}`,
+                title: 'Order Submitted Successfully!',
+                text: 'You will be notified when the laundress accepts your order.',
                 confirmButtonText: 'View Booking'
             }).then(() => {
-                window.location.href = `{{ route('customer.bookings.show', '') }}/${result.value.booking_id}`;
+                window.location.href = `{{ route('customer.bookings.show', '') }}/${data.booking_id}`;
             });
+        } else {
+            throw new Error(data.message || 'Failed to submit order');
         }
-    }).catch(error => {
+    })
+    .catch(error => {
         Swal.fire({
             icon: 'error',
-            title: 'Payment Failed',
+            title: 'Order Submission Failed',
             text: error.message
         });
     });
+}
+
+// Add this helper function to calculate day offset
+function getDayOffset(dayName) {
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const today = new Date().getDay();
+    const targetDay = days.indexOf(dayName.toLowerCase());
+    
+    if (targetDay === -1) return 0;
+    
+    let offset = targetDay - today;
+    if (offset <= 0) {
+        offset += 7; // Move to next week if day has passed
+    }
+    
+    return offset;
 }
 </script>
 @endsection

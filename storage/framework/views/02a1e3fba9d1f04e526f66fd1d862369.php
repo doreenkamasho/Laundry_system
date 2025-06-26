@@ -257,9 +257,7 @@
                         <a href="<?php echo e(route('customer.find-laundress')); ?>" class="btn btn-soft-success w-100">
                             <i class="ri-add-line align-bottom me-1"></i> New Order
                         </a>
-                        <a href="<?php echo e(route('customer.orders.index', ['status' => 'pending'])); ?>" class="btn btn-soft-warning w-100">
-                            <i class="ri-time-line align-bottom me-1"></i> Track Pending Orders
-                        </a>
+                        
                         <a href="<?php echo e(route('customer.profile.edit')); ?>" class="btn btn-soft-info w-100">
                             <i class="ri-user-settings-line align-bottom me-1"></i> Update Profile
                         </a>

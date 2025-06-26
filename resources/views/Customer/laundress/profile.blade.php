@@ -7,6 +7,12 @@
     @slot('title') Laundress Profile @endslot
 @endcomponent
 
+        <div class="text-end">
+            <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='{{ route('customer.bookings.create', ['laundress' => $laundress->id]) }}'">
+                <i class="ri-calendar-check-line align-middle me-1"></i>
+                Book Now
+            </button>
+        </div>
 <div class="row">
     <div class="col-lg-4">
         <div class="text-center mb-4">
@@ -66,21 +72,35 @@
             </div>
             <div class="card-body">
                 <div class="row g-3">
-                    @foreach($laundress->services as $service)
+                    @forelse($laundress->services as $service)
                         <div class="col-md-6">
                             <div class="service-card p-3 border rounded">
-                                <h6 class="mb-3">{{ $service->name }}</h6>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="ri-washing-machine-line text-primary me-2"></i>
+                                    <h6 class="mb-0">{{ $service->name }}</h6>
+                                </div>
                                 <div class="price-list">
-                                    @foreach($service->price_structure as $item)
-                                        <div class="d-flex align-items-center mb-2">
-                                            <span>{{ $item['item'] }}</span>
-                                            <span class="ms-auto">Tsh{{ number_format($item['price'], 2) }}</span>
-                                        </div>
-                                    @endforeach
+                                    @if(is_array($service->price_structure))
+                                        @foreach($service->price_structure as $item)
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                                <span class="text-muted">{{ $item['item'] }}</span>
+                                                <span class="fw-medium">Tsh{{ number_format($item['price'], 2) }}</span>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p class="text-muted">No pricing information available</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="col-12">
+                            <div class="alert alert-info mb-0">
+                                <i class="ri-information-line me-2"></i>
+                                No services available at the moment.
+                            </div>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -136,10 +156,14 @@
             </div>
         </div>
 
-        <div class="text-end">
-            <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='{{ route('customer.bookings.create', ['laundress' => $laundress->id]) }}'">
-                <i class="ri-calendar-check-line align-middle me-1"></i>
-                Book Now
+        <div class="floating-button">
+            <button type="button" 
+                    class="btn btn-primary btn-lg rounded-circle shadow-lg" 
+                    onclick="window.location.href='{{ route('customer.bookings.create', ['laundress' => $laundress->id]) }}'"
+                    data-bs-toggle="tooltip" 
+                    data-bs-placement="left" 
+                    title="Press to Order">
+                <i class="ri-calendar-check-line"></i>
             </button>
         </div>
     </div>
@@ -148,10 +172,41 @@
 
 @section('css')
 <style>
+    .tooltip {
+    font-size: 0.875rem;
+}
+
+.tooltip .tooltip-inner {
+    background-color: #2a3042;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.tooltip.bs-tooltip-left .tooltip-arrow::before {
+    border-left-color: #2a3042;
+}
+    .service-card {
+        background-color: #fff;
+        transition: all 0.3s ease;
+    }
+
     .service-card:hover {
         box-shadow: 0 0 15px rgba(0,0,0,0.1);
         transform: translateY(-2px);
-        transition: all 0.3s ease;
+    }
+
+    .service-card .price-list {
+        border-top: 1px solid rgba(0,0,0,0.1);
+        padding-top: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .service-card i {
+        font-size: 1.25rem;
+    }
+
+    .price-list .fw-medium {
+        color: #556ee6;
     }
 
     .offer-card {
@@ -170,5 +225,42 @@
     .badge.bg-soft-info {
         background-color: rgba(85, 110, 230, 0.1);
     }
+
+    .floating-button {
+        position: fixed;
+        bottom: 8rem;
+        right: 2rem;
+        z-index: 1000;
+    }
+
+    .floating-button .btn {
+        width: 60px;
+        height: 60px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .floating-button .btn i {
+        font-size: 24px;
+    }
+
+    .floating-button .btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23) !important;
+    }
 </style>
+@endsection
+
+@section('script')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+</script>
 @endsection

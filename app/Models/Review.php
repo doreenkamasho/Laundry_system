@@ -32,7 +32,7 @@ class Review extends Model
      */
     public function laundress()
     {
-        return $this->belongsTo(User::class, 'laundress_id');
+        return $this->belongsTo(Laundress::class, 'laundress_id', 'user_id');
     }
 
     /**

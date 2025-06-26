@@ -69,7 +69,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Booking $order)
     {
         $request->validate([
-            'status' => 'required|in:confirmed,washing,drying,ironing,packaging,completed'
+            'status' => 'required|in:confirmed,washing,drying,ironing,packaging,completed,cancelled'
         ]);
 
         if ($order->laundress_id !== auth()->id()) {
@@ -98,6 +98,9 @@ class OrderController extends Controller
                 break;
             case 'completed':
                 $order->completed_at = $now;
+                break;
+            case 'cancelled':
+                $order->cancelled_at = $now;
                 break;
         }
 

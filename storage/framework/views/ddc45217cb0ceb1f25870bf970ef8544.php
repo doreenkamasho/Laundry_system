@@ -61,7 +61,8 @@
                         <h5 class="card-title flex-grow-1 mb-0">Order Information</h5>
                         <div class="flex-shrink-0">
                             <span class="badge bg-<?php echo e($order->status === 'pending' ? 'warning' : 
-                                ($order->status === 'completed' ? 'success' : 'info')); ?> fs-12"><?php echo e(ucfirst($order->status)); ?></span>
+                                ($order->status === 'completed' ? 'success' : 
+                                ($order->status === 'cancelled' ? 'danger' : 'info'))); ?> fs-12"><?php echo e(ucfirst($order->status)); ?></span>
                         </div>
                     </div>
                 </div>
@@ -244,35 +245,74 @@
                             <p class="text-muted mb-0"><?php echo e(optional($order->completed_at)->format('M d, Y g:i A') ?? '-'); ?></p>
                         </div>
                         <?php endif; ?>
+
+                        <!-- Cancelled -->
+                        <?php if($order->status === 'cancelled'): ?>
+                        <div class="timeline-item">
+                            <div class="timeline-circle"></div>
+                            <h6 class="fs-14 mb-1">Order Cancelled</h6>
+                            <p class="text-muted mb-0"><?php echo e(optional($order->cancelled_at)->format('M d, Y g:i A') ?? '-'); ?></p>
+                        </div>
+                        <?php endif; ?>
                     </div>
 
                     <div class="mt-4">
                         <?php if($order->status === 'pending'): ?>
-                            <form id="status-form-<?php echo e($order->id); ?>" 
-                                  action="<?php echo e(route('laundress.orders.update-status', $order)); ?>" 
-                                  method="POST">
-                                <?php echo csrf_field(); ?>
-                                <?php echo method_field('PATCH'); ?>
-                                <input type="hidden" name="status" value="confirmed">
-                                <button type="button" 
-                                        class="btn btn-success w-100"
-                                        onclick="updateOrderStatus('confirmed')">
-                                    <i class="ri-check-line align-middle me-1"></i> Accept Order
-                                </button>
-                            </form>
+                            <div class="d-grid gap-2">
+                                <form id="status-form-<?php echo e($order->id); ?>" 
+                                      action="<?php echo e(route('laundress.orders.update-status', $order)); ?>" 
+                                      method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('PATCH'); ?>
+                                    <input type="hidden" name="status" value="confirmed">
+                                    <button type="button" 
+                                            class="btn btn-success w-100 mb-2"
+                                            onclick="updateOrderStatus('confirmed')">
+                                        <i class="ri-check-line align-middle me-1"></i> Accept Order
+                                    </button>
+                                </form>
+
+                                <form id="cancel-form-<?php echo e($order->id); ?>"
+                                      action="<?php echo e(route('laundress.orders.update-status', $order)); ?>"
+                                      method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('PATCH'); ?>
+                                    <input type="hidden" name="status" value="cancelled">
+                                    <button type="button"
+                                            class="btn btn-danger w-100"
+                                            onclick="updateOrderStatus('cancelled')">
+                                        <i class="ri-close-line align-middle me-1"></i> Cancel Order
+                                    </button>
+                                </form>
+                            </div>
                         <?php elseif($order->status === 'confirmed'): ?>
-                            <form id="status-form-<?php echo e($order->id); ?>" 
-                                  action="<?php echo e(route('laundress.orders.update-status', $order)); ?>" 
-                                  method="POST">
-                                <?php echo csrf_field(); ?>
-                                <?php echo method_field('PATCH'); ?>
-                                <input type="hidden" name="status" value="washing">
-                                <button type="button" 
-                                        class="btn btn-info w-100"
-                                        onclick="updateOrderStatus('washing')">
-                                    <i class="ri-water-flash-line align-middle me-1"></i> Start Washing
-                                </button>
-                            </form>
+                            <div class="d-grid gap-2">
+                                <form id="status-form-<?php echo e($order->id); ?>"
+                                      action="<?php echo e(route('laundress.orders.update-status', $order)); ?>"
+                                      method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('PATCH'); ?>
+                                    <input type="hidden" name="status" value="washing">
+                                    <button type="button"
+                                            class="btn btn-info w-100 mb-2"
+                                            onclick="updateOrderStatus('washing')">
+                                        <i class="ri-water-flash-line align-middle me-1"></i> Start Washing
+                                    </button>
+                                </form>
+
+                                <form id="cancel-form-<?php echo e($order->id); ?>"
+                                      action="<?php echo e(route('laundress.orders.update-status', $order)); ?>"
+                                      method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('PATCH'); ?>
+                                    <input type="hidden" name="status" value="cancelled">
+                                    <button type="button"
+                                            class="btn btn-danger w-100"
+                                            onclick="updateOrderStatus('cancelled')">
+                                        <i class="ri-close-line align-middle me-1"></i> Cancel Order
+                                    </button>
+                                </form>
+                            </div>
                         <?php elseif($order->status === 'washing'): ?>
                             <form id="status-form-<?php echo e($order->id); ?>" 
                                   action="<?php echo e(route('laundress.orders.update-status', $order)); ?>" 
@@ -365,10 +405,12 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 function updateOrderStatus(status) {
-    const form = document.getElementById('status-form-<?php echo e($order->id); ?>');
+    // Get the correct form based on status
+    const formId = status === 'cancelled' ? 'cancel-form-<?php echo e($order->id); ?>' : 'status-form-<?php echo e($order->id); ?>';
+    const form = document.getElementById(formId);
     
     if (!form) {
-        console.error('Status update form not found');
+        console.error('Form not found:', formId);
         return;
     }
 
@@ -378,28 +420,24 @@ function updateOrderStatus(status) {
         drying: 'Move to drying process?',
         ironing: 'Start ironing process?',
         packaging: 'Move to packaging process?',
-        completed: 'Mark this order as completed?'
+        completed: 'Mark this order as completed?',
+        cancelled: 'Are you sure you want to cancel this order? This action cannot be undone.'
     };
 
     Swal.fire({
         title: `Update Status`,
         text: statusMessages[status] || 'Update order status?',
-        icon: 'question',
+        icon: status === 'cancelled' ? 'warning' : 'question',
         showCancelButton: true,
-        confirmButtonText: 'Yes, update it!',
-        cancelButtonText: 'No, not yet',
+        confirmButtonText: status === 'cancelled' ? 'Yes, cancel it!' : 'Yes, update it!',
+        cancelButtonText: 'No, keep it',
         customClass: {
-            confirmButton: 'btn btn-success',
+            confirmButton: `btn ${status === 'cancelled' ? 'btn-danger' : 'btn-success'}`,
             cancelButton: 'btn btn-light ms-1'
         },
         buttonsStyling: false
     }).then((result) => {
         if (result.isConfirmed) {
-            // Update the hidden status input before submitting
-            const statusInput = form.querySelector('input[name="status"]');
-            if (statusInput) {
-                statusInput.value = status;
-            }
             form.submit();
         }
     });

@@ -132,6 +132,7 @@
             <div class="card">
                 <div class="card-header align-items-center d-flex">
                     <h4 class="card-title mb-0 flex-grow-1">Recent Orders</h4>
+                    
                     <div class="flex-shrink-0">
                         <a href="<?php echo e(route('laundress.orders.index')); ?>" class="btn btn-soft-info btn-sm">
                             <i class="ri-file-list-3-line align-middle"></i> View All Orders
@@ -175,6 +176,65 @@
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                 <tr>
                                     <td colspan="7" class="text-center">No recent orders found</td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Reviews Table -->
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">Customer Reviews</h4>
+                    <div class="flex-shrink-0">
+                        <a href="<?php echo e(route('laundress.reviews.index')); ?>" class="btn btn-soft-primary btn-sm">
+                            <i class="ri-star-line align-middle me-1"></i> View All Reviews
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive table-card">
+                        <table class="table table-borderless table-centered align-middle table-nowrap mb-0">
+                            <thead class="text-muted table-light">
+                                <tr>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Rating</th>
+                                    <th scope="col">Comment</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Status</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $__empty_1 = true; $__currentLoopData = $recentReviews ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $review): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                <tr>
+                                    <td><?php echo e($review->customer->name); ?></td>
+                                    <td>
+                                        <div class="text-warning">
+                                            <?php for($i = 1; $i <= 5; $i++): ?>
+                                                <i class="ri-star-<?php echo e($i <= $review->rating ? 'fill' : 'line'); ?>"></i>
+                                            <?php endfor; ?>
+                                        </div>
+                                    </td>
+                                    <td><?php echo e(Str::limit($review->comment, 50)); ?></td>
+                                    <td><?php echo e($review->created_at->format('M d, Y')); ?></td>
+                                    <td>
+                                        <span class="badge bg-<?php echo e($review->is_published ? 'success' : 'warning'); ?>">
+                                            <?php echo e($review->is_published ? 'Published' : 'Pending'); ?>
+
+                                        </span>
+                                    </td>
+                                    
+                                </tr>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                <tr>
+                                    <td colspan="6" class="text-center">No reviews found</td>
                                 </tr>
                                 <?php endif; ?>
                             </tbody>

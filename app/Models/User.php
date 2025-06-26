@@ -60,15 +60,15 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function adminDetail()
-    {
-        return $this->hasOne(AdminDetail::class);
-    }
+    // public function adminDetail()
+    // {
+    //     return $this->hasOne(AdminDetail::class);
+    // }
 
-    public function customerDetail()
-    {
-        return $this->hasOne(CustomerDetail::class);
-    }
+    // public function customerDetail()
+    // {
+    //     return $this->hasOne(CustomerDetail::class);
+    // }
 
     public function laundressDetail()
     {

@@ -254,9 +254,9 @@
                         <a href="{{ route('customer.find-laundress') }}" class="btn btn-soft-success w-100">
                             <i class="ri-add-line align-bottom me-1"></i> New Order
                         </a>
-                        <a href="{{ route('customer.orders.index', ['status' => 'pending']) }}" class="btn btn-soft-warning w-100">
+                        {{-- <a href="{{ route('customer.orders.index', ['status' => 'pending']) }}" class="btn btn-soft-warning w-100">
                             <i class="ri-time-line align-bottom me-1"></i> Track Pending Orders
-                        </a>
+                        </a> --}}
                         <a href="{{ route('customer.profile.edit') }}" class="btn btn-soft-info w-100">
                             <i class="ri-user-settings-line align-bottom me-1"></i> Update Profile
                         </a>

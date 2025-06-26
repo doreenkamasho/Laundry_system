@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Booking;
 use App\Models\Service;
 use App\Models\Transaction;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -45,15 +46,48 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'customer_id' => 'required|exists:users,id',
+            'laundress_id' => 'required|exists:users,id',
+            'service_id' => 'required|exists:services,id',
             'scheduled_date' => 'required|date',
-            'scheduled_time' => 'required|date_format:H:i'
+            'scheduled_time' => 'required',
+            'selected_items' => 'nullable|array',
+            'pickup_required' => 'required|boolean',
+            'delivery_required' => 'required|boolean',
+            'pickup_fee' => 'nullable|numeric',
+            'delivery_fee' => 'nullable|numeric',
+            'total_amount' => 'required|numeric',
+            'payment_status' => 'required|string',
+            // ... other fields ...
         ]);
 
-        $booking = new Booking();
-        $booking->scheduled_date = Carbon::parse($validated['scheduled_date']);
-        $booking->scheduled_time = Carbon::parse($validated['scheduled_time']);
-        // ...other fields...
-        $booking->save();
+        $booking = Booking::create([
+            'customer_id' => $validated['customer_id'],
+            'laundress_id' => $validated['laundress_id'],
+            'service_id' => $validated['service_id'],
+            'scheduled_date' => $validated['scheduled_date'],
+            'scheduled_time' => $validated['scheduled_time'],
+            'selected_items' => $request->input('selected_items', []),
+            'pickup_required' => $validated['pickup_required'],
+            'delivery_required' => $validated['delivery_required'],
+            'pickup_fee' => $validated['pickup_fee'] ?? 0,
+            'delivery_fee' => $validated['delivery_fee'] ?? 0,
+            'total_amount' => $validated['total_amount'],
+            'payment_status' => $validated['payment_status'],
+            // ... other fields ...
+        ]);
+
+        // If the request expects JSON (AJAX), return JSON
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'booking_id' => $booking->id,
+                'message' => 'Booking created successfully!'
+            ]);
+        }
+
+        // Otherwise, fallback to redirect (for normal form posts)
+        return redirect()->route('customer.bookings.index')->with('success', 'Booking created successfully!');
     }
 
     public function calculateTotal(Request $request)
@@ -100,46 +134,54 @@ class BookingController extends Controller
         return view('Customer.bookings.show', compact('booking'));
     }
 
-    public function processPayment(Request $request)
+    public function processPayment(Request $request, Booking $booking)
     {
+        // Validate the request
+        $validated = $request->validate([
+            'phone_number' => 'required|string|regex:/^255\d{9}$/',
+            'amount' => 'required|numeric|min:1',
+            'provider' => 'required|string|in:vodacom,airtel,halotel,mixx'
+        ]);
+
         try {
-            $validated = $request->validate([
-                'phone_number' => 'required|string|regex:/^255[0-9]{9}$/',
-                'amount' => 'required|numeric|min:1',
-                'provider' => 'required|in:vodacom,airtel,halotel,mixx',
-                'booking_id' => 'required|exists:bookings,id'
+            // Get or create customer wallet
+            $wallet = Wallet::firstOrCreate(
+                ['user_id' => auth()->id()],
+                ['balance' => 0]
+            );
+
+            // Generate reference number
+            $reference = Transaction::generateReference();
+
+            // Update booking status
+            $booking->update([
+                'payment_status' => 'paid',
+                'status' => 'processing'
             ]);
 
-            // Simulate payment processing
-            $success = rand(0, 10) > 2; // 80% success rate for demo
-            
-            if (!$success) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Payment failed. Please try again.'
-                ], 422);
-            }
-
-            // Create transaction record
+            // Create transaction record with wallet_id
             $transaction = Transaction::create([
-                'reference' => 'TXN-' . strtoupper(uniqid()),
+                'reference' => $reference,
+                'wallet_id' => $wallet->id, // Add wallet_id
+                'booking_id' => $booking->id,
                 'amount' => $validated['amount'],
-                'provider' => $validated['provider'],
+                'type' => 'payment',
                 'status' => 'completed',
+                'payment_method' => 'mobile_money',
+                'provider' => $validated['provider'],
                 'phone_number' => $validated['phone_number'],
-                'booking_id' => $validated['booking_id']
+                'description' => 'Payment for booking #' . $booking->id
             ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Payment processed successfully',
-                'transaction' => $transaction->reference
+                'transaction' => $reference
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred: ' . $e->getMessage()
+                'message' => 'Payment processing failed: ' . $e->getMessage()
             ], 500);
         }
     }

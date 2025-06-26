@@ -8,11 +8,12 @@ class Transaction extends Model
 {
     protected $fillable = [
         'reference',
-        'booking_id',
         'wallet_id',
+        'booking_id',
         'amount',
         'type',
         'status',
+        'payment_method',
         'provider',
         'phone_number',
         'description'

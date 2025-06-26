@@ -145,6 +145,8 @@ Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer
 
     // Payments
     Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
+    Route::post('/bookings/{booking}/process-payment', [PaymentController::class, 'process'])
+        ->name('bookings.process-payment'); // Changed route name
 
     // Profile and Settings
     Route::get('profile', [ProfileController::class, 'show'])->name('profile');
@@ -227,6 +229,14 @@ Route::middleware(['auth', 'role:laundress'])->prefix('laundress')->name('laundr
         Route::get('/edit', [LaundressSettingsController::class, 'edit'])->name('edit');
         Route::put('/update', [LaundressSettingsController::class, 'update'])->name('update');
     });
+
+    // Reviews routes
+    Route::get('/reviews', [App\Http\Controllers\Laundress\ReviewController::class, 'index'])
+        ->name('reviews.index');
+    Route::get('/reviews/{review}', [App\Http\Controllers\Laundress\ReviewController::class, 'show'])
+        ->name('reviews.show');
+    Route::put('/reviews/{review}/publish', [App\Http\Controllers\Laundress\ReviewController::class, 'togglePublish'])
+        ->name('reviews.publish');
 });
 
 // Theme routes

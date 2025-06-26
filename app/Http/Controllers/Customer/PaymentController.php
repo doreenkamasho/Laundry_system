@@ -10,63 +10,40 @@ use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
-    public function processPayment(Request $request)
+    public function process(Request $request, Booking $booking)
     {
         $validated = $request->validate([
             'phone_number' => 'required|string|regex:/^255[0-9]{9}$/',
-            'amount' => 'required|numeric|min:1',
-            'provider' => 'required|in:vodacom,airtel,halotel,mixx',
-            'booking_data' => 'required|array'
+            'amount' => 'required|numeric',
+            'provider' => 'required|string|in:vodacom,airtel,halotel,mixx'
         ]);
 
         try {
-            DB::beginTransaction();
+            // Generate unique reference number
+            $reference = strtoupper($validated['provider']) . time() . rand(1000, 9999);
 
-            // Create booking
-            $bookingData = $validated['booking_data'];
-            $booking = Booking::create([
-                'customer_id' => auth()->id(),
-                'laundress_id' => $bookingData['laundress_id'],
-                'service_id' => $bookingData['service_id'],
-                'scheduled_date' => $bookingData['scheduled_date'],
-                'scheduled_time' => $bookingData['scheduled_time'],
-                'pickup_required' => $bookingData['pickup_required'],
-                'delivery_required' => $bookingData['delivery_required'],
-                'pickup_fee' => $bookingData['pickup_fee'],
-                'delivery_fee' => $bookingData['delivery_fee'],
-                'total_amount' => $validated['amount'],
-                'selected_items' => $bookingData['selected_items'],
-                'status' => 'pending',
-                'payment_status' => 'paid'
+            // Update booking status
+            $booking->update([
+                'payment_status' => 'paid',
+                'status' => 'processing'
             ]);
-            
-            // Get or create wallet for the customer
-            $wallet = auth()->user()->wallet ?? auth()->user()->createWallet();
 
             // Create transaction record
-            $transaction = Transaction::create([
-                'reference' => Transaction::generateReference(),
-                'booking_id' => $booking->id,
-                'wallet_id' => $wallet->id, // Add wallet_id
+            $transaction = $booking->transaction()->create([
                 'amount' => $validated['amount'],
-                'type' => 'payment',
-                'status' => 'completed',
-                'provider' => $validated['provider'],
                 'phone_number' => $validated['phone_number'],
-                'description' => 'Payment for booking #' . $booking->id
+                'status' => 'completed',
+                'payment_method' => $validated['provider'],
+                'reference' => $reference, // Add the reference number
+                'transaction_id' => $reference // Use same reference as transaction_id
             ]);
 
-            DB::commit();
-            
             return response()->json([
                 'success' => true,
                 'message' => 'Payment processed successfully',
-                'transaction' => $transaction->reference,
-                'booking_id' => $booking->id
+                'transaction' => $reference
             ]);
-
         } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Payment processing failed: ' . $e->getMessage()

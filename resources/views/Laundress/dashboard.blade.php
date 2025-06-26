@@ -132,6 +132,7 @@
             <div class="card">
                 <div class="card-header align-items-center d-flex">
                     <h4 class="card-title mb-0 flex-grow-1">Recent Orders</h4>
+                    {{-- order reviews --}}
                     <div class="flex-shrink-0">
                         <a href="{{ route('laundress.orders.index') }}" class="btn btn-soft-info btn-sm">
                             <i class="ri-file-list-3-line align-middle"></i> View All Orders
@@ -177,6 +178,69 @@
                                 @empty
                                 <tr>
                                     <td colspan="7" class="text-center">No recent orders found</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Reviews Table -->
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">Customer Reviews</h4>
+                    <div class="flex-shrink-0">
+                        <a href="{{ route('laundress.reviews.index') }}" class="btn btn-soft-primary btn-sm">
+                            <i class="ri-star-line align-middle me-1"></i> View All Reviews
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive table-card">
+                        <table class="table table-borderless table-centered align-middle table-nowrap mb-0">
+                            <thead class="text-muted table-light">
+                                <tr>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Rating</th>
+                                    <th scope="col">Comment</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Status</th>
+                                    {{-- <th scope="col">Action</th> --}}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($recentReviews ?? [] as $review)
+                                <tr>
+                                    <td>{{ $review->customer->name }}</td>
+                                    <td>
+                                        <div class="text-warning">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <i class="ri-star-{{ $i <= $review->rating ? 'fill' : 'line' }}"></i>
+                                            @endfor
+                                        </div>
+                                    </td>
+                                    <td>{{ Str::limit($review->comment, 50) }}</td>
+                                    <td>{{ $review->created_at->format('M d, Y') }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ $review->is_published ? 'success' : 'warning' }}">
+                                            {{ $review->is_published ? 'Published' : 'Pending' }}
+                                        </span>
+                                    </td>
+                                    {{-- <td>
+                                        <a href="{{ route('laundress.reviews.show', $review->id) }}" 
+                                           class="btn btn-sm btn-soft-info">
+                                            <i class="ri-eye-line align-middle"></i>
+                                        </a>
+                                    </td> --}}
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="6" class="text-center">No reviews found</td>
                                 </tr>
                                 @endforelse
                             </tbody>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Laundress;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Models\Review;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -49,7 +50,13 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('Laundress.dashboard', compact('stats', 'charts', 'recentOrders'));
+        $recentReviews = Review::where('laundress_id', auth()->id())
+            ->with(['customer', 'booking'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('Laundress.dashboard', compact('stats', 'charts', 'recentOrders', 'recentReviews'));
     }
 
     private function getOrdersTrend($userId)
